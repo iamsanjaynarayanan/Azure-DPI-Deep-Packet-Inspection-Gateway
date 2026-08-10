@@ -33,13 +33,13 @@ graph TD
         end
     end
 
-    Client -->|1. Inbound HTTP Traffic| PIP
+    Client -->|"1. Inbound HTTP Traffic"| PIP
     PIP --> Gateway
     
-    Gateway -->|Blocked: 403 / 429 Response| Client
-    Gateway -->|Async Threat Offload| BlobStorage[Azure Blob Storage: threat-logs]
-    Gateway -->|2. Forward Clean Request (VNet Internal)| Backend
-    Backend -->|3. HTTP 200 OK Response| Gateway
+    Gateway -->|"Blocked: 403 / 429 Response"| Client
+    Gateway -->|"Async Threat Offload"| BlobStorage["Azure Blob Storage: threat-logs"]
+    Gateway -->|"2. Forward Clean Request (VNet Internal)"| Backend
+    Backend -->|"3. HTTP 200 OK Response"| Gateway
     Gateway --> Client
 
     style Gateway fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
