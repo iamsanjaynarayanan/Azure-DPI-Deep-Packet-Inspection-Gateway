@@ -141,11 +141,13 @@ python3 gateway.py
 | **Rate Limiting** | `> 10 reqs / 10s window` | `HTTP 429 Too Many Requests` | Sliding Window Token Bucket |
 
 
+
+
 ![Mitigation - SQLi Detection](<docs/images/10. Mitigation - SQLi Detection.png>)
 <sub>*SQL Injection Mitigation*</sub>
 
-![Mitigation - Rate Limiting](<docs/images/11. Mitigation - Rate Limiting.png>)
-<sub>*Rate Limiting*</sub>
+![Rate Limiting Mitigation](<docs/images/11. Mitigation - Rate Limiting.png>)
+<sub>*Rate Limiting Mitigation*</sub>
 
 ---
 
