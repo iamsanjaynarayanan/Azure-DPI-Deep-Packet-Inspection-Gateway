@@ -84,12 +84,10 @@ All cloud infrastructure parameters are modularly defined as JSON configuration 
 * **Security Policies (`nsg_rules.json`):** Defines Network Security Group rules, exposing ports `22` and `8080` on the DMZ while restricting private tier access strictly to internal DMZ traffic.
 
 ![NSG DMZ Inbound Rules](<docs/images/4. NSG DMZ Inbound Rules.png>)
-
-NSG DMZ Inbound Rules
+<sub>*NSG DMZ Inbound Rules*</sub>
 
 ![NSG Private Inbound Rules](<docs/images/5. NSG Private Inbound Rules.png>)
-
-NSG Private Inbound Rules
+<sub>*NSG Private Inbound Rules*</sub>
 
 * **Compute Resources (`vm_gateway_config.json`, `vm_backend_config.json`):** Configures OS images, instance sizes, static/dynamic IP assignments, and authentication settings for both virtual machines.
 
@@ -106,16 +104,13 @@ NSG Private Inbound Rules
 Provision the Resource Group, VNet, Subnets, NSGs, and VMs following the specifications mapped out in the [`infra/`](./infra) directory.
 
 ![Resource Group](<docs/images/3. Resource Group.png>)
-
-Resource Group creation.
+<sub>*Resource Group creation.*</sub>
 
 ![Creating VM Gateway](<docs/images/6. Creating VM Gateway.png>)
-
-VM Gateway creation.
+<sub>*VM Gateway creation.*</sub>
 
 ![Creating VM Backend](<docs/images/7. Creating VM Backend.png>)
-
-VM Backend creation.
+<sub>*VM Backend creation.*</sub>
 
 ### Step 2: Deploy & Execute DPI Gateway
 Copy `src/gateway.py` to `vm-gateway`, set up the connection string for Azure Blob Storage telemetry, and launch the service:
@@ -147,12 +142,10 @@ python3 gateway.py
 
 
 ![Mitigation - SQLi Detection](<docs/images/10. Mitigation - SQLi Detection.png>)
-
-SQL Injection Mitigation
+<sub>*SQL Injection Mitigation*</sub>
 
 ![Mitigation - Rate Limiting](<docs/images/11. Mitigation - Rate Limiting.png>)
-
-Rate Limiting
+<sub>*Rate Limiting*</sub>
 
 ---
 
