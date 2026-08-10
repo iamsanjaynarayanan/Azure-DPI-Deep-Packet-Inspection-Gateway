@@ -9,43 +9,29 @@
 The system enforces network isolation by establishing a dual-subnet DMZ topology using Azure Virtual Network (VNet) security boundaries.
 
 ```mermaid
-graph TD
-    subgraph Internet ["External / Public Internet"]
-        Client["Client / Threat Actor (curl / Scanners)"]
-    end
+graph LR
+    Client["Client / Threat Actor<br/>(curl / Scanners)"]
 
-    subgraph Azure ["Azure Cloud - Central India Region"]
-        subgraph RG ["Resource Group: rg-packet-sniffer-dmz"]
-            subgraph VNet ["VNet: vnet-packet-sniffer (10.0.0.0/16)"]
-                
-                subgraph DMZ ["Public DMZ Tier (snet-dmz: 10.0.1.0/24)"]
-                    NSG_DMZ["NSG: nsg-dmz<br/>Inbound: Port 22 (SSH), Port 8080 (DPI)"]
-                    PIP["Public IP: pip-vm-gateway<br/>(Static / Dynamic Allocation)"]
-                    Gateway["VM: vm-gateway<br/>(L7 DPI Engine & Proxy)"]
-                end
-
-                subgraph Private ["Private Tier (snet-private: 10.0.2.0/24)"]
-                    NSG_Priv["NSG: nsg-private<br/>Allow: DMZ 10.0.1.0/24:8080<br/>Deny: Direct Public Internet"]
-                    Backend["VM: vm-backend<br/>(Static IP: 10.0.2.4:8080)"]
-                end
-
-            end
+    subgraph Azure["Azure VNet: vnet-packet-sniffer (10.0.0.0/16)"]
+        
+        subgraph DMZ["DMZ Subnet (snet-dmz: 10.0.1.0/24)"]
+            Gateway["VM: vm-gateway<br/>(L7 DPI Engine & Proxy)"]
+            NSG_DMZ["NSG: nsg-dmz<br/>Inbound: Ports 22, 8080"]
         end
+
+        subgraph Private["Private Subnet (snet-private: 10.0.2.0/24)"]
+            Backend["VM: vm-backend<br/>(10.0.2.4:8080)"]
+            NSG_Priv["NSG: nsg-private<br/>Allow: DMZ Only<br/>Deny: Direct Internet"]
+        end
+
+        BlobStorage["Azure Blob Storage<br/>(Container: threat-logs)"]
     end
 
-    Client -->|"1. Inbound HTTP Traffic"| PIP
-    PIP --> Gateway
-    
-    Gateway -->|"Blocked: 403 / 429 Response"| Client
-    Gateway -->|"Async Threat Offload"| BlobStorage["Azure Blob Storage: threat-logs"]
-    Gateway -->|"2. Forward Clean Request (VNet Internal)"| Backend
-    Backend -->|"3. HTTP 200 OK Response"| Gateway
-    Gateway --> Client
-
-    style Gateway fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
-    style Backend fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px
-    style DMZ fill:#FFF8E1,stroke:#FFE082,stroke-dasharray: 5 5
-    style Private fill:#E8F5E9,stroke:#A5D6A7,stroke-dasharray: 5 5
+    Client -->|"1. Inbound HTTP"| Gateway
+    Gateway -.->|"Blocked: 403 / 429"| Client
+    Gateway -->|"2. Forward Clean Traffic"| Backend
+    Backend -->|"3. HTTP 200 OK"| Gateway
+    Gateway -->|"Async Threat Offload"| BlobStorage
 
 ```
 
@@ -98,7 +84,12 @@ All cloud infrastructure parameters are modularly defined as JSON configuration 
 * **Security Policies (`nsg_rules.json`):** Defines Network Security Group rules, exposing ports `22` and `8080` on the DMZ while restricting private tier access strictly to internal DMZ traffic.
 
 ![NSG DMZ Inbound Rules](<docs/images/4. NSG DMZ Inbound Rules.png>)
+
+NSG DMZ Inbound Rules
+
 ![NSG Private Inbound Rules](<docs/images/5. NSG Private Inbound Rules.png>)
+
+NSG Private Inbound Rules
 
 * **Compute Resources (`vm_gateway_config.json`, `vm_backend_config.json`):** Configures OS images, instance sizes, static/dynamic IP assignments, and authentication settings for both virtual machines.
 
@@ -111,15 +102,20 @@ All cloud infrastructure parameters are modularly defined as JSON configuration 
 * Azure CLI (`az`) installed and authenticated (`az login`).
 * Local SSH RSA keypair (`~/.ssh/azure_gateway_key`).
 
-![Azure Login via Powershell](<docs/images/1. Azure Login via Powershell.png>)
-![SSH Key Generation](<docs/images/2. SSH Key Generation.png>)
-
 ### Step 1: Provision Cloud Resources
 Provision the Resource Group, VNet, Subnets, NSGs, and VMs following the specifications mapped out in the [`infra/`](./infra) directory.
 
 ![Resource Group](<docs/images/3. Resource Group.png>)
+
+Resource Group creation.
+
 ![Creating VM Gateway](<docs/images/6. Creating VM Gateway.png>)
+
+VM Gateway creation.
+
 ![Creating VM Backend](<docs/images/7. Creating VM Backend.png>)
+
+VM Backend creation.
 
 ### Step 2: Deploy & Execute DPI Gateway
 Copy `src/gateway.py` to `vm-gateway`, set up the connection string for Azure Blob Storage telemetry, and launch the service:
@@ -149,8 +145,14 @@ python3 gateway.py
 | **Recon Scanner Probe** | `User-Agent: sqlmap/1.5.2` | `HTTP 403 Forbidden` | Scanner Signature Blacklist |
 | **Rate Limiting** | `> 10 reqs / 10s window` | `HTTP 429 Too Many Requests` | Sliding Window Token Bucket |
 
+
 ![Mitigation - SQLi Detection](<docs/images/10. Mitigation - SQLi Detection.png>)
+
+SQL Injection Mitigation
+
 ![Mitigation - Rate Limiting](<docs/images/11. Mitigation - Rate Limiting.png>)
+
+Rate Limiting
 
 ---
 
