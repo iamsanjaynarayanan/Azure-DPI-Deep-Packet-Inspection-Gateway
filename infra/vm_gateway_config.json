@@ -1,0 +1,20 @@
+{
+  "virtual_machine": {
+    "name": "vm-gateway",
+    "role": "L7 DPI Reverse Proxy",
+    "size": "Standard_B2ats_v2",
+    "os_image": "Canonical:ubuntu-24_04-lts:server-gen2:latest",
+    "admin_username": "azureuser",
+    "authentication_type": "SSH Public Key",
+    "networking": {
+      "vnet_name": "vnet-packet-sniffer",
+      "subnet_name": "snet-dmz",
+      "public_ip_allocation": "Dynamic",
+      "private_ip_allocation": "Dynamic"
+    },
+    "disks": {
+      "os_disk_type": "Premium_LRS",
+      "delete_os_disk_with_vm": true
+    }
+  }
+}

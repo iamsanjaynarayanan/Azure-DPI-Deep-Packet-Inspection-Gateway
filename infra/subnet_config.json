@@ -1,0 +1,18 @@
+{
+  "subnets": [
+    {
+      "name": "snet-dmz",
+      "address_prefix": "10.0.1.0/24",
+      "tier": "Public-DMZ",
+      "attached_nsg": "nsg-dmz",
+      "description": "Hosts public-facing DPI Proxy Gateway."
+    },
+    {
+      "name": "snet-private",
+      "address_prefix": "10.0.2.0/24",
+      "tier": "Private-Backend",
+      "attached_nsg": "nsg-private",
+      "description": "Isolated application backend. No direct internet access."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "virtual_network": {
+    "name": "vnet-packet-sniffer",
+    "resource_group": "rg-packet-sniffer-dmz",
+    "location": "centralindia",
+    "address_space": [
+      "10.0.0.0/16"
+    ]
+  }
+}

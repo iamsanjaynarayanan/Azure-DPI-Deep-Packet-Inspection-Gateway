@@ -1,0 +1,21 @@
+{
+  "virtual_machine": {
+    "name": "vm-backend",
+    "role": "Internal HTTP Server",
+    "size": "Standard_B2ats_v2",
+    "os_image": "Canonical:ubuntu-24_04-lts:server-gen2:latest",
+    "admin_username": "azureuser",
+    "authentication_type": "SSH Public Key",
+    "networking": {
+      "vnet_name": "vnet-packet-sniffer",
+      "subnet_name": "snet-private",
+      "public_ip_allocation": "None",
+      "private_ip": "10.0.2.4",
+      "private_ip_allocation": "Static"
+    },
+    "disks": {
+      "os_disk_type": "Premium_LRS",
+      "delete_os_disk_with_vm": true
+    }
+  }
+}

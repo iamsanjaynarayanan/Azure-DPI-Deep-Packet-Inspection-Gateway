@@ -1,0 +1,50 @@
+{
+  "nsg_dmz_rules": [
+    {
+      "name": "Allow-SSH-Inbound",
+      "priority": 100,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "sourcePortRange": "*",
+      "destinationPortRange": "22",
+      "sourceAddressPrefix": "*",
+      "destinationAddressPrefix": "*"
+    },
+    {
+      "name": "Allow-DPI-Gateway-8080",
+      "priority": 110,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "sourcePortRange": "*",
+      "destinationPortRange": "8080",
+      "sourceAddressPrefix": "*",
+      "destinationAddressPrefix": "*"
+    }
+  ],
+  "nsg_private_rules": [
+    {
+      "name": "Allow-DMZ-Only",
+      "priority": 100,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "sourcePortRange": "*",
+      "destinationPortRange": "8080",
+      "sourceAddressPrefix": "10.0.1.0/24",
+      "destinationAddressPrefix": "*"
+    },
+    {
+      "name": "Deny-Direct-Internet",
+      "priority": 200,
+      "direction": "Inbound",
+      "access": "Deny",
+      "protocol": "*",
+      "sourcePortRange": "*",
+      "destinationPortRange": "*",
+      "sourceAddressPrefix": "Internet",
+      "destinationAddressPrefix": "*"
+    }
+  ]
+}
